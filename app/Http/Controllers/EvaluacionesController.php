@@ -158,7 +158,13 @@ class EvaluacionesController extends Controller
     }
 
     public function getev(){
-        $evaluaciones = Evaluacione::all();
+
+        if (auth()->user()->role === 'admin') {
+            $evaluaciones = Evaluacione::with('user')->get();
+        }else{
+            $evaluaciones = Evaluacione::where('user_id', '=', auth()->user()->id)->get();
+        }
+
         return view('evaluaciones', ["evaluaciones" => $evaluaciones]);
     }
 

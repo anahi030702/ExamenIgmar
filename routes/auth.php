@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\EvaluacionesAdminController;
 use App\Http\Controllers\EvaluacionesController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,17 +37,20 @@ Route::middleware('guest')->group(function () {
                 ->name('password.store');
 });
 
+
+
 Route::middleware('auth')->group(function () {
     Route::get('evaluaciones/page1', [EvaluacionesController::class, 'page1'])
-                ->name('evaluaciones.page1');
+    ->name('evaluaciones.page1');
+
     Route::get('evaluaciones', [EvaluacionesController::class, 'getev'])
-                ->name('evaluaciones.get');
+        ->name('evaluaciones.get');
+
     Route::put('evaluaciones/guardares', [EvaluacionesController::class, 'guardares'])
-                ->name('evaluaciones.guardares');
+        ->name('evaluaciones.guardares');
+
     Route::get('evaluaciones/download/{id}', [EvaluacionesController::class, 'download'])
-                ->name('evaluaciones.download');
-
-
+        ->name('evaluaciones.download');    
 
     Route::get('verify-email', EmailVerificationPromptController::class)
                 ->name('verification.notice');
