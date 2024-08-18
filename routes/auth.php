@@ -41,8 +41,11 @@ Route::middleware('auth')->group(function () {
                 ->name('evaluaciones.page1');
     Route::get('evaluaciones', [EvaluacionesController::class, 'getev'])
                 ->name('evaluaciones.get');
-    Route::get('evaluaciones/guardares', [EvaluacionesController::class, 'guardares'])
+    Route::put('evaluaciones/guardares', [EvaluacionesController::class, 'guardares'])
                 ->name('evaluaciones.guardares');
+    Route::get('evaluaciones/download/{id}', [EvaluacionesController::class, 'download'])
+                ->name('evaluaciones.download');
+
 
 
     Route::get('verify-email', EmailVerificationPromptController::class)

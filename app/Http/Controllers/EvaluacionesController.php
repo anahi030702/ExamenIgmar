@@ -6,6 +6,9 @@ use App\Models\Evaluacione;
 use App\Models\Pregunta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+
 
 class EvaluacionesController extends Controller
 {
@@ -108,18 +111,62 @@ class EvaluacionesController extends Controller
     
         // Recupera las preguntas que tengan el mismo id de evaluacion y las pagina, 5 en cada pagina
         $preguntas_vi = Pregunta::where('evaluacione_id', '=', $evaluacion->id)->paginate(5);
+
+        // Recuperar las respuestas de la sesión
+        $respuestas = Session::get('respuestas', []);
     
-        return view('page1', ["preg" => $preguntas_vi]);
+        return view('page1', ["preg" => $preguntas_vi, "respuestas" => $respuestas]);
     }
     
-    public function guardares(Request $request){
-        session()->forget('current_evaluation_id');
-        
-        return $request->all();
-        // return redirect()->route('dashboard'); 
+    public function guardares(Request $request) {
+        $page = $request->input('page', 1);
+    
+        // Recuperar las respuestas existentes de la sesión
+        $respuestas = Session::get('respuestas', []);
+    
+        // Agregar las nuevas respuestas de la solicitud actual
+        foreach ($request->input('res_usu', []) as $id => $respuesta) {
+            $respuestas[$id] = $respuesta;
+        }
+    
+        // Guardar las respuestas actualizadas en la sesión
+        Session::put('respuestas', $respuestas);
+    
+        // Si el usuario hizo clic en "Terminar", procesar las respuestas
+        if ($page == 'finalizar') {
+            // Aquí puedes guardar las respuestas en la base de datos
+            foreach ($respuestas as $id => $respuesta) {
+                $pregunta = Pregunta::find($id);
+                $pregunta->res_usu = $respuesta;
+                if ($respuesta == $pregunta->res) {
+                    $pregunta->res_final = 1;
+                } else {
+                    $pregunta->res_final = 0;
+                }
+                $pregunta->save();
+            }
+            
+            // Limpiar la sesión después de guardar las respuestas
+            Session::forget('respuestas');
+            Session::forget('current_evaluation_id');
+    
+            return redirect()->route('dashboard');
+        }
+    
+        // Redirigir al usuario a la página correspondiente
+        return redirect()->route('evaluaciones.page1', ['page' => $page]);
     }
 
     public function getev(){
-        return view('evaluaciones');
+        $evaluaciones = Evaluacione::all();
+        return view('evaluaciones', ["evaluaciones" => $evaluaciones]);
+    }
+
+    public function download($id){
+        $evaluacion = Evaluacione::findOrFail($id);
+        $preguntas = Pregunta::where('evaluacione_id', "=", $id)->get();
+        $pdf = PDF::loadView('respuestasPDF', ["preguntas" => $preguntas, "name_ev" => $evaluacion->name]);
+        return $pdf->stream($evaluacion->name. ".pdf");
+
     }
 }
