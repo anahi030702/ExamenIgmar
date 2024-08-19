@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('name', 50);
+            $table->string('calificacion', 50)->default("0/20");
+            $table->string('resultados_pdf', 500)->nullable();
             $table->timestamps();
         });
     }

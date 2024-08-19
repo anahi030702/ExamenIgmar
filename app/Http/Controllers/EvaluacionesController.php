@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ResultadosMail;
 use App\Models\Evaluacione;
 use App\Models\Pregunta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
-
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class EvaluacionesController extends Controller
 {
@@ -146,6 +149,20 @@ class EvaluacionesController extends Controller
                 $pregunta->save();
             }
             
+            $id_ev = Session::get('current_evaluation_id');
+            $bien = Pregunta::where('res_final', '=', 1)
+                                ->where('evaluacione_id', '=', $id_ev)
+                                ->count();
+            $ev = Evaluacione::findOrFail($id_ev);
+            $ev->calificacion = $bien."/20";
+            $ev->resultados_pdf = "public/pdfs/".$ev->user_id .$ev->name.".pdf";
+            $ev->save();
+
+            $preguntas = Pregunta::where('evaluacione_id', "=", $id_ev)->get();
+            $pdf = PDF::loadView('respuestasPDF', ["preguntas" => $preguntas, "name_ev" => $ev->name]);
+            $pdf->save(storage_path('app/public/pdfs/'.$ev->user_id .$ev->name.".pdf"));
+
+            Mail::to(auth()->user()->email)->send( new ResultadosMail($ev, $ev->resultados_pdf));
             // Limpiar la sesión después de guardar las respuestas
             Session::forget('respuestas');
             Session::forget('current_evaluation_id');
@@ -170,9 +187,9 @@ class EvaluacionesController extends Controller
 
     public function download($id){
         $evaluacion = Evaluacione::findOrFail($id);
-        $preguntas = Pregunta::where('evaluacione_id', "=", $id)->get();
-        $pdf = PDF::loadView('respuestasPDF', ["preguntas" => $preguntas, "name_ev" => $evaluacion->name]);
-        return $pdf->stream($evaluacion->name. ".pdf");
+        $fileContent = Storage::get($evaluacion->resultados_pdf);
+        return response($fileContent, 200)
+            ->header('Content-Type', 'application/pdf');
 
     }
 }

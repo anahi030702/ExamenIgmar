@@ -11,6 +11,8 @@
       @endif
       <th scope="col">Nombre</th>
       <th scope="col">Fecha</th>
+      <th scope="col">Calificación</th>
+      <th scope="col">Resultados</th>
     </tr>
   </thead>
   <tbody>
@@ -21,9 +23,10 @@
       @endif
       <td>{{$evaluacion->name}}</td>
       <td>{{$evaluacion->created_at}}</td>
+      <td>{{$evaluacion->calificacion}}</td>
       <td>
         <a href="{{route('evaluaciones.download', $evaluacion->id)}}">
-          <button class="btn btn-dark">Descargar resultados</button>
+          <button class="btn btn-dark">Descargar</button>
         </a>
       </td>
     </tr>
