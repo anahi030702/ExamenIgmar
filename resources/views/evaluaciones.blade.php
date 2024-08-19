@@ -26,7 +26,7 @@
       <td>{{$evaluacion->calificacion}}</td>
       <td>
         <a href="{{$evaluacion->url_firmada}}">
-          <button class="btn btn-dark">Descargar</button>
+          <button class="btn btn-dark">Ver</button>
         </a>
       </td>
     </tr>

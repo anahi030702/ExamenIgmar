@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -58,7 +59,9 @@ class ResultadosMail extends Mailable
     
     public function attachments()
     {
-        return [];
+        return [
+            Attachment::fromStorage($this->url_pdf),
+        ];
         // // Ruta del archivo PDF en el almacenamiento
         // $pdfPath = storage_path('app/' . $this->url_pdf);
 
