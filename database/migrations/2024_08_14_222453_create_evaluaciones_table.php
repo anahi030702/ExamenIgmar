@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('name', 50);
             $table->string('calificacion', 50)->default("0/20");
             $table->string('resultados_pdf', 500)->nullable();
+            $table->string('url_firmada', 500)->nullable();
             $table->timestamps();
         });
     }

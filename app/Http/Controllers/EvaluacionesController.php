@@ -154,6 +154,8 @@ class EvaluacionesController extends Controller
                                 ->where('evaluacione_id', '=', $id_ev)
                                 ->count();
             $ev = Evaluacione::findOrFail($id_ev);
+            $url = URL::signedRoute('evaluaciones.download', ['id' => $id_ev]);
+            $ev->url_firmada = $url;
             $ev->calificacion = $bien."/20";
             $ev->resultados_pdf = "public/pdfs/".$ev->user_id .$ev->name.".pdf";
             $ev->save();
@@ -163,6 +165,7 @@ class EvaluacionesController extends Controller
             $pdf->save(storage_path('app/public/pdfs/'.$ev->user_id .$ev->name.".pdf"));
 
             Mail::to(auth()->user()->email)->send( new ResultadosMail($ev, $ev->resultados_pdf));
+
             // Limpiar la sesión después de guardar las respuestas
             Session::forget('respuestas');
             Session::forget('current_evaluation_id');

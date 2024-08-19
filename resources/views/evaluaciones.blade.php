@@ -25,7 +25,7 @@
       <td>{{$evaluacion->created_at}}</td>
       <td>{{$evaluacion->calificacion}}</td>
       <td>
-        <a href="{{route('evaluaciones.download', $evaluacion->id)}}">
+        <a href="{{$evaluacion->url_firmada}}">
           <button class="btn btn-dark">Descargar</button>
         </a>
       </td>
