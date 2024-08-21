@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('num2', 8);
             $table->string('ope', 20);
             $table->string('res', 100);
-            $table->string('res_usu', 100)->default("0");
+            $table->string('res_usu', 100)->nullable();
             $table->boolean('res_final')->default(false);
             $table->foreignId('evaluacione_id')->constrained();
             $table->timestamps();

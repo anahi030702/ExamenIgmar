@@ -5,12 +5,20 @@
   @csrf
   @method('PUT')
   @foreach ($preg as $pre)
-  <div class="mb-3">
-    <label for="res_usu{{ $pre->id }}" class="form-label">¿Cuál es el resultado de {{ $pre->num1 }} {{ $pre->ope }} {{ $pre->res }} ?</label>
+<div class="mb-3">
+    <label for="res_usu{{ $pre->id }}" class="form-label @error('res_usu.'.$pre->id) is-invalid @enderror">
+        ¿Cuál es el resultado de {{ $pre->num1 }} {{ $pre->ope }} {{ $pre->num2 }} ?
+    </label>
     <input type="text" class="form-control" id="res_usu{{ $pre->id }}" name="res_usu[{{ $pre->id }}]"
            value="{{ old('res_usu.'.$pre->id, $respuestas[$pre->id] ?? '') }}">
-  </div>
-  @endforeach
+    @error('res_usu.'.$pre->id)
+    <div class="invalid-feedback">
+        {{ $message }}
+    </div>
+    @enderror
+</div>
+@endforeach
+
 
   <div class="row">
     <div class="col-11">

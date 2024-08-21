@@ -8,7 +8,7 @@
         <div class="card" style="width: 18rem;">
             <img src="{{ asset('imagens/ver.jpeg')}}" class="card-img-top" alt="...">
             <div class="card-body">
-                <h5 class="card-title">Ver tus evaluaciones</h5>
+                <h5 class="card-title">Ver evaluaciones</h5>
                 <a href="{{ route('evaluaciones.get')}}" class="btn btn-primary">Ver evaluaciones</a>
             </div>
         </div>
